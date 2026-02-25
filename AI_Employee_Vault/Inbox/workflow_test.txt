@@ -1,0 +1,3 @@
+Test workflow - this should trigger the file watcher
+Without requiring authentication
+Test timestamp: 2026-02-15 06:45:41

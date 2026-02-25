@@ -1,49 +1,67 @@
-# Personal AI Employee - Bronze Tier
+# AI Employee Vault - Advanced Automation System
 
 ## Overview
-This is a simple AI employee system that monitors a file system and processes tasks using Claude Code. The system consists of:
+This is an advanced AI employee system that monitors multiple inputs (files, emails, social media) and processes tasks automatically using AI reasoning. The system consists of:
 - A vault folder structure for organizing tasks
-- A file system watcher that detects new files
-- Claude Code skills for processing tasks
+- Multiple watchers for different input sources (files, Gmail, WhatsApp, LinkedIn)
+- AI-powered reasoning and planning engine
+- Dashboard for monitoring and status updates
+- Approval workflow for sensitive actions
 
 ## Prerequisites
-- Python 3.13+
-- Claude Code installed
-- Node.js v24+ (optional, for advanced features)
-- GitHub Desktop (for version control)
+- Python 3.8+
+- Ollama with Qwen model (for AI reasoning) - optional but recommended
+- Windows, macOS, or Linux operating system
 
 ## Setup
 
 ### 1. Install Dependencies
 ```bash
-pip install watchdog
+cd AI_Employee_Vault
+pip install -r requirements.txt
 ```
 
-### 2. Folder Structure
+### 2. Configure Environment Variables
+Copy the `.env.example` to `.env` and update with your credentials:
+```bash
+cp .env.example .env
+```
+
+Update the `.env` file with your actual credentials for Gmail, LinkedIn, etc.
+
+### 3. Folder Structure
 The system uses the following folder structure:
 ```
 AI_Employee_Vault/
 ├── Dashboard.md          # Real-time summary
 ├── Company_Handbook.md   # Rules and guidelines
-├── SKILL.md              # Claude Code skills definition
+├── SKILL.md              # AI skill definitions
 ├── Inbox/                # Drop files here for processing
 ├── Needs_Action/         # Files awaiting processing
-└── Done/                 # Completed tasks
+├── Plans/                # Generated action plans
+├── Pending_Approval/     # Plans awaiting human approval
+├── Approved/             # Approved plans ready for execution
+├── Done/                 # Completed tasks
+├── Archive/              # Archived completed tasks
+└── Logs/                 # System logs
 ```
 
-### 3. Running the File System Watcher
+### 4. Initialize Directories
+Run the setup script to create all required directories:
 ```bash
-cd AI_Employee_Vault
-python filesystem_watcher.py
+python setup_directories.py
 ```
-Keep this running in a separate terminal window.
 
-### 4. Using the Dashboard Updater
-Run the dashboard updater script from inside the vault directory:
+### 5. Running the System
+Start the entire system with a single command:
 ```bash
-cd AI_Employee_Vault
-python dashboard_updater.py
+python main.py
 ```
+
+Alternatively, you can run individual components:
+- File system watcher: `python filesystem_watcher.py`
+- Dashboard updater: `python dashboard_updater.py`
+- Orchestrator: `python orchestrator.py`
 
 ## How It Works
 
@@ -52,55 +70,82 @@ python dashboard_updater.py
 2. The `filesystem_watcher.py` detects the new file
 3. The file is copied to the `Needs_Action` folder
 4. A metadata file is created alongside the copied file
-5. The `dashboard_updater.py` script processes items in `Needs_Action` and updates the dashboard
+5. The `reasoning_trigger.py` generates a plan for the task
+6. The plan goes to `Pending_Approval` for human review
+7. After approval, the task is executed
+8. The `dashboard_updater.py` updates the dashboard with progress
 
-## How It Works
+### Multi-Source Input Processing
+The system monitors multiple input sources:
+- **File System**: Files dropped in the Inbox folder
+- **Gmail**: Monitored for new emails requiring action
+- **WhatsApp**: Messages monitored for tasks
+- **LinkedIn**: Posts and messages monitored for opportunities
 
-### File Processing Flow
-1. User drops a file in the `Inbox` folder
-2. The `filesystem_watcher.py` detects the new file
-3. The file is copied to the `Needs_Action` folder
-4. A metadata file is created alongside the copied file
-5. The `dashboard_updater.py` script processes items in `Needs_Action` and updates the dashboard
+### AI Reasoning and Planning
+When a task enters `Needs_Action`, the system:
+1. Uses AI to analyze the request
+2. Generates a detailed step-by-step plan
+3. Submits the plan for human approval
+4. Executes approved plans automatically
+
+## Configuration
+
+### Environment Variables
+Configure the `.env` file with:
+- API keys and credentials for external services
+- Scheduling intervals for different components
+- Resource limits and thresholds
+- Priority keywords for task classification
+
+### Company Handbook
+Update `Company_Handbook.md` with your organization's rules and procedures that the AI employee should follow.
 
 ## Testing the System
 
-### Test Scenario 1: File Drop Processing
-1. Ensure the file system watcher is running:
-   ```bash
-   python filesystem_watcher.py
-   ```
+### Quick Start Test
+1. Start the system: `python main.py`
 2. Create a test file in the Inbox folder:
    ```bash
-   echo "Test file content" > Inbox/test_file.txt
+   echo "Process this document for me" > Inbox/test_task.txt
    ```
-3. Check that the file was copied to Needs_Action along with its metadata file
+3. Check that the file moves to Needs_Action and a plan is generated
 
-### Test Scenario 2: Dashboard Updater Processing
-1. Place a file in Needs_Action (or let the watcher put one there)
-2. Run the dashboard updater script to process the file:
-   ```bash
-   python dashboard_updater.py
-   ```
-
-### Test Scenario 3: Full Workflow
-1. Start the file system watcher
-2. Drop a file in the Inbox folder
-3. Wait for the watcher to process it
-4. Run the dashboard updater script to process the newly created file in Needs_Action
-5. Verify that Dashboard.md was updated appropriately
+### Component Tests
+Each component can be tested individually:
+- File watcher: Drop files in Inbox and verify they're detected
+- Dashboard: Run `python dashboard_updater.py` to update the dashboard
+- Reasoning: Add files to Needs_Action and verify plans are generated
 
 ## Troubleshooting
 
-### File Watcher Issues
-- If the file watcher doesn't detect new files, ensure you have proper file permissions
-- On some systems, you may need to run with elevated privileges
+### Common Issues
+- **Missing dependencies**: Run `pip install -r requirements.txt`
+- **Missing directories**: Run `python setup_directories.py`
+- **Dashboard not updating**: Ensure `Dashboard.md` exists in the root
+- **Components not starting**: Check the logs in the `Logs/` directory
 
-### Claude Integration
-- Make sure Claude Code is properly installed and accessible from your command line
-- Run Claude from within the AI_Employee_Vault directory to ensure it has access to the vault files
+### Error Logging
+System errors are logged to the `Logs/` directory with timestamps. Check these files if components fail to start or behave unexpectedly.
 
-### Common Errors
-- "Permission denied": Check file permissions for the vault directories
-- "Module not found": Install missing Python packages with pip
-- "File not found": Ensure file paths are correct and relative to the vault root
+### Resource Management
+The system monitors CPU, memory, and disk usage. If resources are low, non-critical components may pause automatically. Adjust thresholds in the `.env` file if needed.
+
+## Architecture
+
+### Core Components
+- **Orchestrator**: Manages all system components and their lifecycle
+- **File System Watcher**: Monitors the Inbox for new files
+- **Reasoning Engine**: Generates plans for tasks using AI
+- **Dashboard Updater**: Maintains the status dashboard
+- **Service Watchers**: Monitor Gmail, WhatsApp, LinkedIn for new inputs
+- **Approval Handler**: Processes approved plans for execution
+
+### Data Flow
+Inputs → Needs_Action → Planning → Approval → Execution → Done → Archive
+
+## Security Considerations
+- Store credentials securely in the `.env` file (not committed to version control)
+- Review all AI-generated plans before approval
+- Monitor system logs regularly
+- Limit system permissions to necessary operations only

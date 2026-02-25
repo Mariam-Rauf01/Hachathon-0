@@ -1,0 +1,10 @@
+GMAIL TASK
+From: Mariam Rauf <mariam.rauf567@gmail.com>
+Subject: task
+Time: 1771114954000
+Content: urgent
+
+# Action needed:
+- [ ] Review email content
+- [ ] Determine required action
+- [ ] Create appropriate response/task
