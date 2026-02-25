@@ -1,3 +1,6 @@
 .env
-AI_Employee_Vault/credentials.json
-AI_Employee_Vault/token.pickle
+credentials.json
+token.pickle
+client_secret*.json
+*.pickle
+linkedin_session/
